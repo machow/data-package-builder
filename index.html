@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <script type="text/javascript" src="js/angular.js"></script>
+  <script type="text/javascript" src="components/main.js"></script>
+  
+</head>
+<body ng-app="datapackage">
+
+  <div id="container" style="width: 800px;" ng-controller="FormController as formControl">
+    <!-- MAIN FORM -->
+    <div id="paperwork" style="float:left">
+      <form action="" ng-model="package">
+        <div class="option" ng-repeat="opts in options" ng-show="opts.active">
+          <span ng-click="deleteInput(opts)">-</span>
+          <span>{{opts.name}}</span>
+
+          <!-- KEY SWITCH POINTS FOR INPUTS, 
+            since some need textareas, and others may take multiple options -->
+
+          <div ng-switch="opts.type">
+            <!-- default -->
+            <input name="{{opts.name}}" ng-model="opts.entry" ng-switch-default>
+
+            <!-- textarea -->
+            <textarea name="{{opts.name}}" rows=4 cols=50
+                      ng-model="opts.entry" ng-switch-when="textarea"></textarea>
+
+            <!-- list of text inputs -->
+            <div ng-switch-when="list">
+            <span ng-click="removeEntry(opts.entry)">-</span>
+            <input name="{{opts.name}}" type="text"  ng-repeat="ii in opts.entry track by $index"
+                   ng-model="opts.entry[$index]">
+            </div>
+
+            <!-- different input fields -->
+            <div ng-switch-when="fields">
+              <div ng-repeat="entry in opts.entry" ng-if="opts.plural">
+                <span ng-click="removeEntry(opts.entry, $index)">-</span>
+                <span ng-repeat-start="(name, field) in entry">{{name}}</span>
+                <input  ng-repeat-end name="{{field.name}}" type="text" 
+                        ng-model="field.entry"
+                        ng-repeat-end
+                        >
+              </div>
+              <div ng-if="!opts.plural">
+                <span ng-repeat-start="(name, entry) in opts.entry">{{name}}</span>
+                <input ng-repeat-end
+                       name="{{field.name}}" type="text" 
+                       ng-model="field.entry"
+                       ng-repeat-end
+                       >
+              </div>
+            </div>
+          <span ng-click="appendEntry(opts)" ng-if="opts.plural">+</span>
+          </div>
+
+          <!-- /switches -->
+
+        </div>
+      </form>
+      <ul> 
+        <li ng-repeat="opts in options"
+            ng-click="selectInput(opts)"
+            ng-show="!opts.active"
+            ng-class="[opts.name == focus ? 'focused' : '', 'priority-'+opts.priority]"
+            >
+        {{opts.name}}
+        </li>
+      <ul>
+    </div>
+
+    <!-- HELP BAR -->
+    <div id="help" style="float:right;">
+      Help Bar..
+      <div ng-include="'views/help/' + focus + '.html'" ng-if="focus">
+      </div>
+    </div>
+
+
+  </div>
+</body>
+</html>
