@@ -96,19 +96,20 @@ app.controller('FormController', ['$scope', function($scope){
                 }
                 option.entry.push(new_entry);
             }
-        }
             else {
                 console.log(option.entry);
                 if (!option.entry) option.entry = [];
                 option.entry.push('');
             }
+        }
     };
 
     $scope.removeEntry = function(entry, ii){
         console.log(ii);
         console.log(entry);
-        if (ii === undefined && entry.length > 1) entry.pop()
-        else entry.splice(ii, 1);
+        console.log(entry.length);
+        if (ii === undefined & entry.length > 1) entry.pop()
+        else if (entry.length > 1) entry.splice(ii, 1);
     };
 
 }])
